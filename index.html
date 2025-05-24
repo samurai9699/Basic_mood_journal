@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Mood & Sleep Journal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body class="flex flex-col items-center justify-start min-h-screen p-4 pt-6 md:pt-10">
+    <div class="content-card w-full max-w-4xl">
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500">
+                Mood Journal
+            </h1>
+            </header>
+        <p class="text-xs text-center text-slate-500 -mt-8 mb-8" id="userIdDisplay">User ID: Loading...</p>
+
+        <section id="moodSelection" class="mb-8">
+            <h2 class="text-xl font-semibold mb-5 text-slate-800 text-center">How are you feeling?</h2>
+            <div class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-x-3 gap-y-4">
+                </div>
+        </section>
+
+        <section id="sleepQualitySelection" class="mb-8">
+            <h2 class="text-xl font-semibold mb-5 text-slate-800 text-center">How was your sleep?</h2>
+            <div class="flex justify-center space-x-2 sm:space-x-3">
+                </div>
+        </section>
+
+        <section id="noteInputSection" class="mb-8 relative">
+            <label for="moodNote" class="block text-lg font-semibold mb-2 text-slate-800">Add a note (optional):</label>
+            <textarea id="moodNote" rows="3" class="w-full p-3 pr-12 border transition-shadow" placeholder="What's on your mind? Any details?"></textarea>
+            <button id="clearNoteBtn" title="Clear note" class="absolute top-10 right-3 text-slate-400 hover:text-slate-600 transition-colors">
+                <i class="fas fa-times-circle fa-lg"></i>
+            </button>
+        </section>
+
+        <div class="text-center mb-10">
+            <button id="saveMoodBtn" class="interactive-btn bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-10 rounded-lg shadow-lg disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100">
+                <span id="saveBtnText">Save Entry</span>
+                <i id="saveBtnSpinner" class="fas fa-spinner fa-spin ml-2 hidden"></i>
+            </button>
+        </div>
+
+        <section id="trendsSection" class="mb-10">
+            <h2 class="text-2xl font-semibold mb-6 text-slate-800 border-b-2 border-slate-200 pb-3">Recent Trends & Averages</h2>
+            <div class="chart-container mb-6">
+                <canvas id="moodSleepChart"></canvas>
+            </div>
+            <div id="averagesDisplay" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+                 <div class="p-4 bg-blue-50 rounded-lg shadow-md"> 
+                    <h3 class="font-semibold text-blue-700 mb-1">Current 5 Entries</h3>
+                    <p class="text-slate-600">Avg Mood: <span id="avgMoodCurrent" class="font-bold">-</span></p>
+                    <p class="text-slate-600">Avg Sleep: <span id="avgSleepCurrent" class="font-bold">-</span></p>
+                </div>
+                <div class="p-4 bg-indigo-50 rounded-lg shadow-md"> 
+                    <h3 class="font-semibold text-indigo-700 mb-1">Previous 5 Entries</h3>
+                    <p class="text-slate-600">Avg Mood: <span id="avgMoodPrevious" class="font-bold">-</span></p>
+                    <p class="text-slate-600">Avg Sleep: <span id="avgSleepPrevious" class="font-bold">-</span></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="moodHistory">
+            <h2 class="text-2xl font-semibold mb-6 text-slate-800 border-b-2 border-slate-200 pb-3">Entry History</h2>
+            <div id="moodHistoryContainer" class="mood-history-container max-h-[30rem] overflow-y-auto space-y-5 pr-2">
+                <div id="noHistoryText" class="text-center py-10">
+                    <i class="fas fa-feather-alt text-5xl text-slate-400 mb-4"></i>
+                    <p class="text-slate-500 text-lg">Your journal is a blank canvas.</p>
+                    <p class="text-slate-400">Let's fill it with your story!</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="messageModal" class="modal"><div class="modal-content"><p id="modalMessageText" class="text-lg mb-5"></p><button id="modalCloseBtn" class="interactive-btn bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-6 rounded-lg">OK</button></div></div>
+    <div id="confirmationModal" class="modal"><div class="modal-content"><p id="confirmationModalText" class="text-lg mb-6"></p><div class="flex justify-center space-x-4"><button id="confirmCancelBtn" class="interactive-btn bg-slate-300 hover:bg-slate-400 text-slate-800 font-medium py-2.5 px-6 rounded-lg">Cancel</button><button id="confirmActionBtn" class="interactive-btn bg-red-500 hover:bg-red-600 text-white font-medium py-2.5 px-6 rounded-lg">Confirm</button></div></div></div>
+    <div id="editNoteModal" class="modal"><div class="modal-content !text-left"><h3 class="text-xl font-semibold mb-4 text-slate-800">Edit Note</h3><textarea id="editNoteTextarea" rows="4" class="w-full p-3 border" placeholder="Update your note..."></textarea><input type="hidden" id="editEntryId"><div class="flex justify-end space-x-3 mt-5"><button id="editNoteCancelBtn" class="interactive-btn bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2 px-5 rounded-lg">Cancel</button><button id="editNoteSaveBtn" class="interactive-btn bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-5 rounded-lg">Save</button></div></div></div>
+
+</body>
+</html>    
